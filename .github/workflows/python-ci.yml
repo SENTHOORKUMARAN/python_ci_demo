@@ -1,5 +1,3 @@
-```bash id="ibg1mr"
-cat > .github/workflows/python-ci.yml << 'EOF'
 name: Python CI
 
 on:
