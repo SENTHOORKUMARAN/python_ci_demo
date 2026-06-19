@@ -1,0 +1,53 @@
+name: Code Quality
+
+on:
+  pull_request:
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tools
+        run: |
+          pip install pycodestyle
+
+      - name: Run pycodestyle
+        id: style
+        continue-on-error: true
+        run: |
+          pycodestyle . > style_report.txt
+
+      - name: Run custom checks
+        run: |
+          python scripts/quality_check.py
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -s style_report.txt ]; then
+
+            BODY=$(cat style_report.txt)
+
+            curl -L \
+              -X POST \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer $GITHUB_TOKEN" \
+              https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments \
+              -d "{\"body\":\"Pycodestyle violations:\n\n$BODY\"}"
+
+          fi
