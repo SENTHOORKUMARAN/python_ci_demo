@@ -1,28 +1,28 @@
+```bash id="ibg1mr"
+cat > .github/workflows/python-ci.yml << 'EOF'
 name: Python CI
 
 on:
-push:
-pull_request:
+  push:
+  pull_request:
 
 jobs:
-test:
-runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-latest
 
-```
-steps:
-  - name: Checkout Repository
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  - name: Setup Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
 
-  - name: Install pytest
-    run: |
-      pip install pytest
+      - name: Install pytest
+        run: |
+          pip install pytest
 
-  - name: Run tests
-    run: |
-      pytest
-```
+      - name: Run tests
+        run: |
+          pytest
